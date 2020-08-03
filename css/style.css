@@ -1,0 +1,152 @@
+#myTooltip {
+    position: absolute;
+    text-align: left;
+    width: 140px;
+    height: 140px;
+    padding: 8px;
+    margin-top: -20px;
+    font: 10px sans-serif;
+    background: #fff8c6;
+    pointer-events: none;
+    border: 1px;
+    border-radius: 8px;
+}
+
+#filterButton {
+    margin-right: 5px;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+}
+
+.dropdown-toggle {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+    /*margin-right: 5px;*/
+}
+
+.bootstrap-select {
+    margin-right: 5px;
+}
+
+.nav-link {
+    background-color: #343a40;
+}
+
+#svgRadar {
+    float:right;
+    /*!*position: absolute;*!*/
+    /*display: inline;*/
+    /*text-align: right;*/
+}
+
+#profileImage {
+    float: left;
+}
+
+#player_container {
+    vertical-align: center;
+    text-align: center;
+}
+
+body {
+    font-family: Helvetica Neue,Roboto,Arial,Sans-Serif !important;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.35;
+    color: black;
+    text-align: left;
+    background-color: #e9ecef;
+}
+
+#summonerName {
+    font-weight: bold;
+}
+
+#tooltipKDAText {
+    float: right;
+    width:60px;
+    height:60px;
+    text-align: center;
+    display: table;
+}
+
+#tooltipCSText {
+    float: right;
+    width:60px;
+    height:60px;
+    text-align: center;
+    display: table;
+}
+
+#tooltipChampImage {
+    width:60px;
+    height:60px;
+    /*float: right;*/
+}
+
+#tooltipRoleImage {
+    width:60px;
+    height:60px;
+    float:left;
+}
+
+#KDAText {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#CSText {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+svg {
+    font: 10px sans-serif;
+}
+
+
+/*.bar {*/
+/*    fill: steelblue;*/
+/*    clip-path: url(#clip);*/
+/*}*/
+
+.subBar {
+    /*fill: gray;*/
+    opacity: 0.5;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.brush .extent {
+    stroke: #fff;
+    fill: steelblue;
+    fill-opacity: .25;
+    shape-rendering: crispEdges;
+}
+
+#AVGOtherPlayersLine {
+    fill: none;
+    stroke: #ffab00;
+    stroke-width: 3;
+}
+
+.overlay {
+    fill: none;
+    pointer-events: all;
+}
+
+.dot {
+    fill: #ffab00;
+    stroke: #fff;
+}
+
+.focus circle {
+    fill: none;
+    stroke: steelblue;
+}
