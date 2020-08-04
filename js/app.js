@@ -38,10 +38,11 @@ var selectedStatString = "gold earned";
 var playerSelected = "our wave";
 
 var margin = {top: 30, right: 30, bottom: 70, left: 90};
-var margin2 = {top: 455, right: 30, bottom: 0, left: 90};
+var margin2 = {top: 500, right: 30, bottom: 0, left: 90};
 var width = 1000 - margin.left - margin.right;
 var height = 400 - margin.top - margin.bottom;
-var height2 = 600 - margin2.top - margin2.bottom;
+var height2 = 150 ;//- margin2.top - margin2.bottom;
+var offset = 90;
 
 var x = d3.scaleBand()
     .range([0, width])
@@ -107,35 +108,35 @@ function start() {
             for (let i = 0; i < games.length; i++) {
             //     for (let i = 0; i < startingEntries; i++) {
 
-                if (games[i]["boh"][0]["summonerName"] === playerSelected) {
-                    document.getElementById("summonerName").innerHTML = summonerName = games[i]["boh"][0]["summonerName"];
+                if (games[i]["game"][0]["summonerName"] === playerSelected) {
+                    document.getElementById("summonerName").innerHTML = summonerName = games[i]["game"][0]["summonerName"];
 
-                    var kills = parseInt(games[i]["boh"][0]["kills"]);
-                    var deaths = parseInt(games[i]["boh"][0]["deaths"]);
+                    var kills = parseInt(games[i]["game"][0]["kills"]);
+                    var deaths = parseInt(games[i]["game"][0]["deaths"]);
                     if (deaths === 0) deaths = 1;
-                    var assists = parseInt(games[i]["boh"][0]["assists"]);
+                    var assists = parseInt(games[i]["game"][0]["assists"]);
                     var KDA = Math.round(((kills + assists)/deaths)*10)/10;
                     data1.push({
-                        group: new Date(parseInt(games[i]["boh"][0]["gameCreation"])).toLocaleString(),
-                        goldEarned: parseInt(games[i]["boh"][0]["goldSpent"]),
-                        win: games[i]["boh"][0]["win"],
+                        group: new Date(parseInt(games[i]["game"][0]["gameCreation"])).toLocaleString(),
+                        goldEarned: parseInt(games[i]["game"][0]["goldSpent"]),
+                        win: games[i]["game"][0]["win"],
                         matchId: games[i]["_id"],
                         kills: kills,
-                        deaths: parseInt(games[i]["boh"][0]["deaths"]),
+                        deaths: parseInt(games[i]["game"][0]["deaths"]),
                         assists: assists,
                         KDA: KDA,
-                        totalMinionsKilled:parseInt( games[i]["boh"][0]["totalMinionsKilled"]),
-                        totalDamageDealt: parseInt(games[i]["boh"][0]["totalDamageDealt"]),
-                        minutes: games[i]["boh"][1]["frames"].length,
-                        championId: parseInt(games[i]["boh"][0]["championId"]),
-                        role: games[i]["boh"][0]["role"],
-                        gameCreation: parseInt(games[i]["boh"][0]["gameCreation"]),
-                        visionScore: parseInt(games[i]["boh"][0]["visionScore"]),
-                        mapControl: parseFloat(games[i]["boh"][0]["mapControl"]),
-                        killParticipation: parseFloat(games[i]["boh"][0]["killParticipation"]),
+                        totalMinionsKilled:parseInt( games[i]["game"][0]["totalMinionsKilled"]),
+                        totalDamageDealt: parseInt(games[i]["game"][0]["totalDamageDealt"]),
+                        minutes: games[i]["game"][1]["frames"].length,
+                        championId: parseInt(games[i]["game"][0]["championId"]),
+                        role: games[i]["game"][0]["role"],
+                        gameCreation: parseInt(games[i]["game"][0]["gameCreation"]),
+                        visionScore: parseInt(games[i]["game"][0]["visionScore"]),
+                        mapControl: parseFloat(games[i]["game"][0]["mapControl"]),
+                        killParticipation: parseFloat(games[i]["game"][0]["killParticipation"]),
                         index: i
                     })
-                    rolesPlayed[games[i]["boh"][0]["role"]]=1;
+                    rolesPlayed[games[i]["game"][0]["role"]]=1;
                 }
 
             }
@@ -250,33 +251,34 @@ function drawBrush(data) {
 
     var subBars = context.selectAll('.subBar')
         .data(data)
-
-    var maxHeight = d3.max(data, function(d) { return parseInt(y2(d[selectedStat])); })
+    //TODO
+    // var maxHeight = d3.max(data, function(d) { return parseInt(y2(d[selectedStat])); })
     subBars.enter().append("rect")
         .classed('subBar', true)
-        .attr("height",function(d) { return (height2-(y2(d[selectedStat])/maxHeight)*100-15) ; })//height2 - y2(d[selectedStat])
+        .attr("height",function(d) { return height2-y2(d[selectedStat])})
         .attr("width",function() { return x2.bandwidth(); })
-        .attr("x",function(d) { //console.log(x(d.group))
-            return x2(d.gameCreation); })//x2(d.group)
-        .attr("y",function(d) { //console.log(y2(d[selectedStat]))
-            return (y2(d[selectedStat])/maxHeight)*100-15; }) //y2(d.goldEarned)
-        .attr("fill", function(d) {//console.log(d.win)
-            //console.log(d.win === "true")
+        .attr("x",function(d) {
+            return x2(d.gameCreation); })
+        .attr("y",function(d) {
+            return y2(d[selectedStat])-offset})
+        .attr("fill", function(d) {
             if (d.win === "true") return "#0073ff"
             else return "#ff0000"});
 
+    //NON TOCCARE
     context.append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(0," + (height2-30) + ")")
+        .attr("transform", "translate(0," + (height2-offset) + ")")
         .call(xAxis2)
         .selectAll(".tick").remove();
 
+    //NON TOCCARE
     context.append("g")
         .attr("class", "x brush")
         .call(brush)
         .selectAll("rect")
-        .attr("y", height2 - 180)
-        .attr("height", height2 + 7);
+        .attr("y", -offset)
+        .attr("height", height2 + 7)
 
     tooltip = d3.select("body").append("div")
         .attr("id", "myTooltip")
@@ -417,7 +419,7 @@ function drawBrush(data) {
 function brushed() {
     if(data1.length!==0){
         var data = data1;
-        var selection = d3.brushSelection(this);//d3.event.selection;
+        var selection = d3.brushSelection(this);
 
         if (selection !== null) {
 
@@ -458,8 +460,7 @@ function brushed() {
 function updateScale(data) {
     var tickScale = d3.scalePow().range([data.length / 10, 0]).domain([data.length, 0]).exponent(.5)
 
-    // var selection = d3.event.selection;
-    var brushValue = brush.extent()[1] - brush.extent()[0];//selection[1] - selection[0];//
+    var brushValue = brush.extent()[1] - brush.extent()[0];
     if(brushValue === 0) {
         brushValue = width;
     }
@@ -498,24 +499,16 @@ function update(data) {
         .attr("height", function (d) {
             var matchId = d.matchId.split("_")[0]
             if(avgStatsDict[matchId]!==undefined)
-                var boh = avgStatsDict[matchId][selectedStat];
-            // console.log(y(boh))
-            return height - y(boh)})
+                var value = avgStatsDict[matchId][selectedStat];
+            return height - y(value)})
         .attr("width", function () { return x.bandwidth(); })
         .attr("x", function (d) { return x(d.gameCreation); })
         .attr("y", function (d) {
             var matchId = d.matchId.split("_")[0]
             if(avgStatsDict[matchId]!==undefined)
-                var boh = avgStatsDict[matchId][selectedStat];
-            // console.log(y(boh))
-            return y(boh); })
-        // .attr("deaths", function(d) { return d.deaths.toString(); })
-        // .attr("assists", function(d) { return d.assists.toString(); })
-        // .attr("index", function(d) { return d.index.toString(); })
-        // .attr("matchId", function(d) { return d.matchId.toString(); })
+                var value = avgStatsDict[matchId][selectedStat];
+            return y(value); })
         .attr("fill", "rgba(0,0,0,0.18)")
-    // .attr("onclick", function(d) { return "showMatch(globalData["+d.index+"])"})
-    // .attr("onmouseover", function(d) { return "showTooltip(globalData["+d.index+"])"});
 
     bars.append("rect")
         .classed('bar', true)
@@ -661,20 +654,19 @@ function enter(data) {
         .attr("height", function (d) {
             var matchId = d.matchId.split("_")[0]
             if(avgStatsDict[matchId]!==undefined)
-                var boh = avgStatsDict[matchId][selectedStat];
+                var value = avgStatsDict[matchId][selectedStat];
             if(selectedStat==="KDA") {
-                boh = Math.round(boh)
-                console.log(boh)
+                value = Math.round(value)
             }
-            return height - y(boh)})
+            return height - y(value)})
         .attr("width", function () { return x.bandwidth(); })
         .attr("x", function (d) { return x(d.gameCreation); })
         .attr("y", function (d) {
             var matchId = d.matchId.split("_")[0]
             if(avgStatsDict[matchId]!==undefined)
-                var boh = avgStatsDict[matchId][selectedStat];
-            if(selectedStat==="KDA") boh=Math.round(boh)
-            return y(boh); })
+                var value = avgStatsDict[matchId][selectedStat];
+            if(selectedStat==="KDA") value=Math.round(value)
+            return y(value); })
         .attr("fill", "rgba(0,0,0,0.18)")
         .attr("onclick", function(d) { return "showMatch(globalData["+d.index+"])"})
         .attr("onmouseover", function(d) { return "showTooltip(globalData["+d.index+"])"});
@@ -817,12 +809,12 @@ d3.json("http://ddragon.leagueoflegends.com/cdn/10.15.1/data/en_US/champion.json
     })
 
 function showTooltip(data) {
-    var kills = parseInt(data["boh"][0].kills);
-    var totalMinionsKilled = parseInt(data["boh"][0].totalMinionsKilled);
-    var minutes = parseInt(data["boh"][1]["frames"].length -1);
-    var deaths = parseInt(data["boh"][0].deaths);
+    var kills = parseInt(data["game"][0].kills);
+    var totalMinionsKilled = parseInt(data["game"][0].totalMinionsKilled);
+    var minutes = parseInt(data["game"][1]["frames"].length -1);
+    var deaths = parseInt(data["game"][0].deaths);
     if(deaths===0) deaths = 1;
-    var assists = parseInt(data["boh"][0].assists);
+    var assists = parseInt(data["game"][0].assists);
     var kda = Math.round(((kills + assists)/deaths)*10)/10;
     var cs4minute = Math.round((totalMinionsKilled/minutes)*10)/10;
     tooltip
@@ -831,8 +823,8 @@ function showTooltip(data) {
         .style("opacity", "1");
     tooltip
         .html("<div id='tooltipKDAText'><text id='KDAText'> KDA:"+ kda + "\n" +kills +"/"+ deaths +"/"+ assists + "</text></div>" +
-            "<div id='tooltipChampImage'><img style='display: inline' width='60' height='60' src="+ "img/champion/" + championsDict[data["boh"][0].championId].image.full +" /></div>" +
-            "<div id='tooltipRoleImage'><img style='display: inline' width='60' height='60' src="+ "img/ranked-positions/" + data["boh"][0].role +".png /></div>" +
+            "<div id='tooltipChampImage'><img style='display: inline' width='60' height='60' src="+ "img/champion/" + championsDict[data["game"][0].championId].image.full +" /></div>" +
+            "<div id='tooltipRoleImage'><img style='display: inline' width='60' height='60' src="+ "img/ranked-positions/" + data["game"][0].role +".png /></div>" +
             "<div id='tooltipCSText'><text id='CSText'> CS: " + totalMinionsKilled + "\n" +cs4minute +"/minute" + "</text></div>")
 }
 
@@ -841,7 +833,7 @@ function showMatch(data) {
     console.log(data);
     // d3.select('#championModalImage').remove()
     // d3.select('#championModalDiv').append("img")
-    //     .attr("src","/resources/img/champion/" + championsDict[data["boh"][0].championId].image.full + "")
+    //     .attr("src","/resources/img/champion/" + championsDict[data["game"][0].championId].image.full + "")
     //     .attr("id","championModalImage")
     //     .attr("width","120")
     //     .attr("height","120");
@@ -1050,71 +1042,71 @@ function filter() {
             // for (let i = 0; i < startingEntries; i++) {
                 for (let i = 0; i < games.length; i++) {
 
-                if (games[i]["boh"][0]["summonerName"] === playerSelected) {
+                if (games[i]["game"][0]["summonerName"] === playerSelected) {
                     //////////////////////////////////////////////////////////////////////////////////////////
                     if($("#roleSelect").val()==="All Role") {
-                        document.getElementById("summonerName").innerHTML = summonerName = games[i]["boh"][0]["summonerName"];
+                        document.getElementById("summonerName").innerHTML = summonerName = games[i]["game"][0]["summonerName"];
 
-                        var kills = parseInt(games[i]["boh"][0]["kills"]);
-                        var deaths = parseInt(games[i]["boh"][0]["deaths"]);
+                        var kills = parseInt(games[i]["game"][0]["kills"]);
+                        var deaths = parseInt(games[i]["game"][0]["deaths"]);
                         if (deaths === 0) deaths = 1;
-                        var assists = parseInt(games[i]["boh"][0]["assists"]);
+                        var assists = parseInt(games[i]["game"][0]["assists"]);
                         var KDA = Math.round(((kills + assists)/deaths)*10)/10;
                         tempData.push({
-                            group: new Date(parseInt(games[i]["boh"][0]["gameCreation"])).toLocaleString(),
-                            goldEarned: parseInt(games[i]["boh"][0]["goldSpent"]),
-                            win: games[i]["boh"][0]["win"],
+                            group: new Date(parseInt(games[i]["game"][0]["gameCreation"])).toLocaleString(),
+                            goldEarned: parseInt(games[i]["game"][0]["goldSpent"]),
+                            win: games[i]["game"][0]["win"],
                             matchId: games[i]["_id"],
                             kills: kills,
-                            deaths: parseInt(games[i]["boh"][0]["deaths"]),
+                            deaths: parseInt(games[i]["game"][0]["deaths"]),
                             assists: assists,
                             KDA: KDA,
-                            totalMinionsKilled:parseInt( games[i]["boh"][0]["totalMinionsKilled"]),
-                            totalDamageDealt: parseInt(games[i]["boh"][0]["totalDamageDealt"]),
-                            minutes: games[i]["boh"][1]["frames"].length,
-                            championId: parseInt(games[i]["boh"][0]["championId"]),
-                            role: games[i]["boh"][0]["role"],
-                            gameCreation: parseInt(games[i]["boh"][0]["gameCreation"]),
-                            visionScore: parseInt(games[i]["boh"][0]["visionScore"]),
-                            mapControl: parseFloat(games[i]["boh"][0]["mapControl"]),
-                            killParticipation: parseFloat(games[i]["boh"][0]["killParticipation"]),
+                            totalMinionsKilled:parseInt( games[i]["game"][0]["totalMinionsKilled"]),
+                            totalDamageDealt: parseInt(games[i]["game"][0]["totalDamageDealt"]),
+                            minutes: games[i]["game"][1]["frames"].length,
+                            championId: parseInt(games[i]["game"][0]["championId"]),
+                            role: games[i]["game"][0]["role"],
+                            gameCreation: parseInt(games[i]["game"][0]["gameCreation"]),
+                            visionScore: parseInt(games[i]["game"][0]["visionScore"]),
+                            mapControl: parseFloat(games[i]["game"][0]["mapControl"]),
+                            killParticipation: parseFloat(games[i]["game"][0]["killParticipation"]),
                             index: i
                         })
-                        rolesPlayed[games[i]["boh"][0]["role"]] = 1;
-                        // console.log(parseInt(games[i]["boh"][0]["gameCreation"]))
+                        rolesPlayed[games[i]["game"][0]["role"]] = 1;
+                        // console.log(parseInt(games[i]["game"][0]["gameCreation"]))
 
 
                     } else {
-                        if(games[i]["boh"][0]["role"]===$("#roleSelect").val()){
-                            document.getElementById("summonerName").innerHTML = summonerName = games[i]["boh"][0]["summonerName"];
+                        if(games[i]["game"][0]["role"]===$("#roleSelect").val()){
+                            document.getElementById("summonerName").innerHTML = summonerName = games[i]["game"][0]["summonerName"];
 
-                            var kills = parseInt(games[i]["boh"][0]["kills"]);
-                            var deaths = parseInt(games[i]["boh"][0]["deaths"]);
+                            var kills = parseInt(games[i]["game"][0]["kills"]);
+                            var deaths = parseInt(games[i]["game"][0]["deaths"]);
                             if (deaths === 0) deaths = 1;
-                            var assists = parseInt(games[i]["boh"][0]["assists"]);
+                            var assists = parseInt(games[i]["game"][0]["assists"]);
                             var KDA = Math.round(((kills + assists)/deaths)*10)/10;
                             tempData.push({
-                                group: new Date(parseInt(games[i]["boh"][0]["gameCreation"])).toLocaleString(),
-                                goldEarned: parseInt(games[i]["boh"][0]["goldSpent"]),
-                                win: games[i]["boh"][0]["win"],
+                                group: new Date(parseInt(games[i]["game"][0]["gameCreation"])).toLocaleString(),
+                                goldEarned: parseInt(games[i]["game"][0]["goldSpent"]),
+                                win: games[i]["game"][0]["win"],
                                 matchId: games[i]["_id"],
                                 kills: kills,
-                                deaths: parseInt(games[i]["boh"][0]["deaths"]),
+                                deaths: parseInt(games[i]["game"][0]["deaths"]),
                                 assists: assists,
                                 KDA: KDA,
-                                totalMinionsKilled:parseInt( games[i]["boh"][0]["totalMinionsKilled"]),
-                                totalDamageDealt: parseInt(games[i]["boh"][0]["totalDamageDealt"]),
-                                minutes: games[i]["boh"][1]["frames"].length,
-                                championId: parseInt(games[i]["boh"][0]["championId"]),
-                                role: games[i]["boh"][0]["role"],
-                                gameCreation: parseInt(games[i]["boh"][0]["gameCreation"]),
-                                visionScore: parseInt(games[i]["boh"][0]["visionScore"]),
-                                mapControl: parseFloat(games[i]["boh"][0]["mapControl"]),
-                                killParticipation: parseFloat(games[i]["boh"][0]["killParticipation"]),
+                                totalMinionsKilled:parseInt( games[i]["game"][0]["totalMinionsKilled"]),
+                                totalDamageDealt: parseInt(games[i]["game"][0]["totalDamageDealt"]),
+                                minutes: games[i]["game"][1]["frames"].length,
+                                championId: parseInt(games[i]["game"][0]["championId"]),
+                                role: games[i]["game"][0]["role"],
+                                gameCreation: parseInt(games[i]["game"][0]["gameCreation"]),
+                                visionScore: parseInt(games[i]["game"][0]["visionScore"]),
+                                mapControl: parseFloat(games[i]["game"][0]["mapControl"]),
+                                killParticipation: parseFloat(games[i]["game"][0]["killParticipation"]),
                                 index: i
                             })
-                            rolesPlayed[games[i]["boh"][0]["role"]] = 1;
-                            // console.log(parseInt(games[i]["boh"][0]["gameCreation"]))
+                            rolesPlayed[games[i]["game"][0]["role"]] = 1;
+                            // console.log(parseInt(games[i]["game"][0]["gameCreation"]))
 
                         }
                     }

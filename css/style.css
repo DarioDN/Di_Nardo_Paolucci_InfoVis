@@ -167,4 +167,10 @@ svg {
 
 .selection {
     height: 160px;
+    y: -90
+}
+
+.handle {
+    height: 160px;
+    y: -90
 }
