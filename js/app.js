@@ -70,7 +70,7 @@ var brush = d3.brushX().extent([[0,0],[width,height]]).on("brush",brushed).on("e
 var svg = d3.select("#my_dataviz")
     .append("svg")
     .attr("width", width + margin.left + margin.right+1000)
-    .attr("height", height + margin.top + margin.bottom +500);
+    .attr("height", height + margin.top + margin.bottom +300);
 
 var focus = svg.append("g")
     .attr("class", "focus")
@@ -780,7 +780,7 @@ function avgAllPlayers(data) {
                 .attr("stroke", "green")
                 .attr("stroke-width", "5")
                 .attr("id", "AVGOtherPlayersLine")
-                .on("mouseover",function() {d3.select("#AVGPlayerLine").raise()});
+                .on("mouseover",function() {d3.select("#AVGOtherPlayersLine").raise()});
         }
     }
 }
