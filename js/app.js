@@ -97,7 +97,7 @@ myRadartooltip.append("text")
 
 function start() {
 
-    d3.json("data/dataset3.json")
+    d3.json("data/dataset.json")
         .then(function(data) {
             globalData = data;
             games = data;
