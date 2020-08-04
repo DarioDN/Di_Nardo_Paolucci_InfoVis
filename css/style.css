@@ -12,6 +12,20 @@
     border-radius: 8px;
 }
 
+#myRadarTooltip {
+    position: absolute;
+    text-align: center;
+    width: 100px;
+    height: 30px;
+    padding: 8px;
+    margin-top: -20px;
+    font: 10px sans-serif;
+    background: #fff8c6;
+    pointer-events: none;
+    border: 1px;
+    border-radius: 8px;
+}
+
 #filterButton {
     margin-right: 5px;
     border-top-left-radius: 0.25rem;
@@ -132,7 +146,7 @@ svg {
 
 #AVGOtherPlayersLine {
     fill: none;
-    stroke: #ffab00;
+    stroke: #00ff00;
     stroke-width: 3;
 }
 
@@ -149,4 +163,8 @@ svg {
 .focus circle {
     fill: none;
     stroke: steelblue;
+}
+
+.selection {
+    height: 160px;
 }
