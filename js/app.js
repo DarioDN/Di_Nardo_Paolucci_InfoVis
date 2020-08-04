@@ -779,7 +779,8 @@ function avgAllPlayers(data) {
                 })
                 .attr("stroke", "green")
                 .attr("stroke-width", "5")
-                .attr("id", "AVGOtherPlayersLine");
+                .attr("id", "AVGOtherPlayersLine")
+                .on("mouseover",function() {d3.select("#AVGPlayerLine").raise()});
         }
     }
 }
